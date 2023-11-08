@@ -22,7 +22,7 @@ DEBUGOBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_debug.o))
 
 NONOEOBJECTS = $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.cpp=_nonoe.o))
 NONOEOBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
-INC := -I ../../shared/include -I .. -pthread -I include -I .
+INC := -I ../../shared/include -I ../../shared/third_party -I .. -pthread -I include -I .
 CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
 

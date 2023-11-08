@@ -1,4 +1,3 @@
-#include "server_type.h"
 #include "gwas.h"
 /* OCALL */
 int getclientnum();

@@ -16,7 +16,7 @@ OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
 CFLAGS := -O3 -g -Wall -std=c++14 -pthread
 FSFLAGS := -ldl
-INC := -I ../shared/include -I include
+INC := -I ../shared/include -I ../shared/third_party -I include
 CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
 
@@ -66,7 +66,7 @@ client: ${OBJECTS}
 	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG} ${CURLFLAG}
 
 run:
-	./bin/client configs/$(CONFIG)
+	./bin/client $(CONFIG)
 
 clean:
 	@echo "Cleaning..."

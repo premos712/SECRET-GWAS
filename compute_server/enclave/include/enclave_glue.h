@@ -5,7 +5,6 @@
 /* For testrun without open enclave ONLY */
 
 #include "gwas.h"
-#include "server_type.h"
 #include <limits>
 
 /* ECALL */

@@ -11,7 +11,7 @@ SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 CFLAGS := -O3 -g -Wall -std=c++14 -pthread
-INC := -I ../shared -I include
+INC := -I ../shared -I include -I third_party
 CRYPTFLAG := -lcryptopp
 
 # list of test drivers (with main()) for development

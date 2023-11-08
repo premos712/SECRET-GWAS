@@ -36,7 +36,7 @@ CRYPTO_LDFLAGS=$(shell pkg-config oeenclave-$(COMPILER) --variable=${OE_CRYPTO_L
 
 BOOST_ROOT = /usr/local/lib/boost_1_76_0/
 CXXFLAGS+= -O3 -I $(BOOST_ROOT)
-CXXFLAGS+= -I ../../shared/include/ -I .. -I include -I .
+CXXFLAGS+= -I ../../shared/include/ -I ../../shared/third_party -I .. -I include -I .
 
 TMP1=${subst -nostdinc,, $(CXXFLAGS)}
 TMP2=${subst -I/opt/openenclave/share/pkgconfig/../../include/openenclave/3rdparty/libcxx,, $(TMP1)}
