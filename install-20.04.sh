@@ -27,16 +27,16 @@ sudo apt-get install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-
 
 source /opt/openenclave/share/openenclave/openenclaverc
 
-cd compute_server
+cd register_server
 
 make clean; make
+make clean; make
+
+cd ../compute_server
+
 make clean; make
 
 cd ../client
-
-make clean; make
-
-cd ../register_server
 
 make clean; make
 

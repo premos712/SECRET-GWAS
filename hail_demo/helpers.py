@@ -2,6 +2,7 @@ import hail as hl
 import os
 import shutil
 import subprocess
+from time import sleep
 
 
 def send_data_to_SECRET(mt):
@@ -14,6 +15,8 @@ def send_data_to_SECRET(mt):
 
     os.chdir('../register_server/')
     os.system("make run &")
+
+    sleep(.5)
 
     os.chdir('../client/')
     os.system("./bin/client configs/client_config-demo.json &")
