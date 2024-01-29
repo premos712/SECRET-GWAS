@@ -36,13 +36,40 @@ SECRET-GWAS is developed for Linux and has been tested on Ubuntu 18.04 and 20.04
 Additionally, if you wish to run the demo you will need to install Hail.
 
 ```
-# To run the demo, install Hail and Hail dependencies.
+# For the demo, install Hail and Hail dependencies.
 > ./hail_demo/install_reqs.sh
 ```
 
 ## Usage
 
-Coming soon.
+To run the demo, first see the installation instructions to make sure you have all the prerequisites installed.
+
+Enter the demo directory
+
+```
+> cd hail_demo/
+```
+
+Active the Python virtual environment
+
+```
+> source env/bin/activate
+```
+
+You can now use the demo. First run the original Hail demo
+
+```
+> python3 hail_gwas.py
+```
+
+The output will be written to `Hail_result.vcf`. To run the Hail/*SECRET-GWAS* equivalent that performs the association using *SECRET-GWAS* use the second demo script
+
+
+```
+> python3 SECRET_gwas.py
+```
+
+The output will be written to `SECRET_results.vcf`. This can be compared to the original Hail demo output file, as can the two scripts. This is not a true integration into Hail, just a demonstration of how *SECRET-GWAS* parses Hail input files and creates similar output files.
 
 ## Acknowledgements
 - Inspiration for several design decisions were taken from <a href="https://hail.is/" target = “_blank”>Hail</a>. We also use Hail for the filtering and QC in our GWAS pipeline.
