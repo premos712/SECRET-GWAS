@@ -9,13 +9,12 @@
 //////////              Oblivious_log_row             /////////////////
 /////////////////////////////////////////////////////////////
 
-// Approximates e^-x from (-3, 3), and uses a step function after that. Good balance of accuracy and speed for our sigmoid function!
+// Approximates e^x from (-3, 3), and uses a step function after that. Good balance of accuracy and speed for our sigmoid function!
 // https://math.stackexchange.com/questions/71357/approximation-of-e-x
-inline double modified_pade_approx_oblivious(double x) {
+double Oblivious_log_row::modified_pade_approx_oblivious(double x) {
     double approx = ((x + 3) * (x + 3) + 3) / ((x - 3) * (x - 3) + 3);
     int within_bounds = (x > -3) & (x < 3);
-    int pos = x > 0;
-    return approx * within_bounds + !within_bounds * ((pos << 7) * x);
+    return predicated_assignment(within_bounds, ((x > 0) << 7) * x, approx);
 }
 
 // 2 is a magic number that helps with SqrMatrix construction, "highest level matrix"
@@ -75,9 +74,9 @@ void Oblivious_log_row::init() {
     uint8_t val;
     for (int i = 0 ; i < n; ++i) {
         val = (data[i / 4] >> ((i % 4) * 2)) & 0b11;
-        int is_not_NA = !is_NA_uint8(val);
-        sum += val * is_not_NA;
-        count += is_not_NA;
+        int is_NA = is_NA_uint8(val);
+        sum = predicated_assignment(is_NA, sum + val, sum);
+        count = predicated_assignment(is_NA, count + 1, count);
     }
 
     genotype_average = sum / (count + !count);
@@ -98,7 +97,7 @@ void Oblivious_log_row::update_estimate() {
     for (int i = 0; i < n; i++) {
         double x = (data[(i + client_offset) / 4] >> (((i + client_offset) % 4) * 2) ) & 0b11;
         is_NA = is_NA_uint8(x);
-        x = (!is_NA * x) + (is_NA * genotype_average);
+        x = predicated_assignment(is_NA, x, genotype_average);
 
         const std::vector<double>& patient_pnc = gwas->phenotype_and_covars.data[i];
 

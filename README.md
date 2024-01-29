@@ -48,7 +48,7 @@ Coming soon.
 - Inspiration for several design decisions were taken from <a href="https://hail.is/" target = “_blank”>Hail</a>. We also use Hail for the filtering and QC in our GWAS pipeline.
 - The data we used for testing is upsampled from a <a href="https://www.internationalgenome.org/" target = “_blank”>1000 Genomes Project</a> snippet provided by <a href="https://hail.is/docs/0.2/tutorials/01-genome-wide-association-study.html" target = “_blank”>Hail</a>.
 - We use several third-party libraries for synchronization free data structures, json parsing, and thread pooling. All can be found 
-<a href="./shared/third_party" target = “_blank”>here</a>.
+<a href="./shared/third_party" target=“_blank”>here</a>.
 
 ## Limitations
 The current version of SECRET-GWAS does not yet implement:

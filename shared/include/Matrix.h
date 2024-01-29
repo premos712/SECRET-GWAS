@@ -21,17 +21,36 @@ class SqrMatrix{
     private:
         std::vector<std::vector<double>> m;
         int n;
+       
+        // If you change this - make sure to change the one in enc_gwas.h (don't ask me why I didn't use a single shared function, it just doesn't work for some reason)
+        double  __attribute__((noinline)) predicated_assignment(const int pred, const double &v1, const double &v2) {
+            __asm("mov %rsp,%rax");
+            __asm("mov $0x1,%edi");
+            __asm("sub %esi,%edi");
+            __asm("cvtsi2sd %edi,%xmm1");
+            __asm("sar $0x3f,%rax");
+            __asm("or %rax,%rdx");
+            __asm("mulsd (%rdx),%xmm1");
+            __asm("mov $0xffffffffffffffff,%rdx");
+            __asm("cvtsi2sd %esi,%xmm0");
+            __asm("or %rax,%rcx");
+            __asm("mulsd (%rcx),%xmm0");
+            __asm("addsd %xmm1,%xmm0");
+            __asm("shl $0x2f,%rax");
+            __asm("or %rax,%rsp");
+            __asm("pop %rbp");
+            __asm("ret");
+            return 0; // does nothing, suppresses warning
+        }
     public: 
         SqrMatrix():n(0){}
         SqrMatrix(int _n, int opt):m(_n, std::vector<double>(_n, 0)), n(_n) {
             tmpK = new double[n];
             tmpL = new double[n];
             if (opt) {
-                //det.resize(n);
                 det = new double*[n];
                 for (int i = 0; i < n; i++) {
                     det[i] = new double[n];
-                    //det[i].resize(n);
                 }
             }
             if (opt == 2) {
@@ -70,42 +89,12 @@ class SqrMatrix{
         SqrMatrix& operator=(SqrMatrix&) = default;
         std::vector<double>& operator[](int index){return m[index];}
         double at(int row, int col) const {return m[row][col];}
-        //void assign(int row, int col, double val){m[row][col] =}
         void plus_equals(int row, int col, double val) {m[row][col] += val;}
         void minus_equals(int row, int col, double val) {m[row][col] -= val;}
         void assign(int row, int col, double val) {m[row][col] = val;}
         void inner_assign(int a_row, int a_col, int b_row, int b_col) {m[a_row][a_col] = m[b_row][b_col];}
         int size() const {return n;}
         bool is_empty() { return n == 0; }
-        // friend SqrMatrix operator+(const SqrMatrix& me, const SqrMatrix &other) {
-        //     if (me.n != other.n) throw MathError("SqrMatrix size mistmatch");
-        //     SqrMatrix sum(me.n);
-        //     for (int i=0; i<me.n; i++){
-        //         for (int j=0; j<me.n; j++){
-        //             sum.m[i][j] = me.m[i][j] + other.m[i][j];
-        //         }
-        //     }
-        //     return {sum};
-        // }
-        // friend SqrMatrix operator*(const SqrMatrix& me, double mult){
-        //     SqrMatrix ans(me.n);
-        //     for (int i=0; i<me.n; i++){
-        //         for (int j=0; j<me.n; j++){
-        //             ans[i][j] = me.m[i][j] * mult;
-        //         }
-        //     }
-        //     return ans;
-        // }
-        // friend vector<double> operator*(const SqrMatrix& me, const vector<double>& mult){
-        //     if (mult.size() != me.n) throw MathError("Matrix Vector dim mismatch");
-        //     vector<double> ans(me.n, 0);
-        //     for (int i=0; i<me.n; i++){
-        //         for (int j=0; j<me.n; j++){
-        //             ans[i] += me.m[i][j] * mult[j];
-        //         }
-        //     }
-        //     return ans;
-        // }
 
         void multiply_t(double mult) {
             for (int i = 0; i < n; i++){
@@ -173,15 +162,6 @@ class SqrMatrix{
                 }
             }
         }
-
-        // vector<double> DIAG()const{
-        //     vector<double> ans;
-        //     ans.resize(n);
-        //     for(int i=0; i<n; i++){
-        //         ans[i] = m[i][i];
-        //     }
-        //     return ans;
-        // }
         
         void COF() {
             if (n == 1) {
@@ -210,7 +190,6 @@ class SqrMatrix{
                         subi++;
                     }
                     cof[x][y] = (-2 * ((x + y) & 1) + 1) * sub->DET();
-                    //cof[x][y] = ((x + y) % 2 == 0 ? 1: -1) * sub->DET();
                 }
             }
         }
@@ -325,12 +304,12 @@ class SqrMatrix{
 
                     // If we are doing the swap, negate the sign and swap l and k
                     // If we aren't, keep the sign the same and do "identity" swap
-                    sign *= (-do_swap) + (!do_swap);
+                    sign = predicated_assignment(do_swap, sign, -sign);
                     for (int swap_idx = 0; swap_idx < n; swap_idx++) {
                         double k_val = det[k][swap_idx];
                         double l_val = det[l][swap_idx];
-                        tmpL[swap_idx] = (do_swap * k_val) + (!do_swap * l_val);
-                        tmpK[swap_idx] = (do_swap * l_val) + (!do_swap * k_val);
+                        tmpL[swap_idx] = predicated_assignment(do_swap, l_val, k_val);
+                        tmpK[swap_idx] = predicated_assignment(do_swap, k_val, l_val);
                     }
                     std::swap(det[l], tmpL);
                     std::swap(det[k], tmpK);
@@ -356,7 +335,7 @@ class SqrMatrix{
             }
 
             // Return the expected result, unless there was a case where no 0 entries were found
-            return sign * det[n - 1][n - 1] * swap_always_found;
+            return predicated_assignment(swap_always_found, 0, sign * det[n - 1][n - 1]);
         }
 
         void INV() {

@@ -3,7 +3,7 @@
     "covariants": ["1", "isFemale"],
     "institutions": ["client1"],
     "y_val_name": "PurpleHair",
-    "analysis_type": "logistic",
+    "analysis_type": "logistic-oblivious",
     "enclave_path": "../enclave/gwasenc.signed",
     "register_server_info": {
         "hostname": "localhost",

@@ -66,7 +66,7 @@ client: ${OBJECTS}
 	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG} ${CURLFLAG}
 
 run:
-	./bin/client $(CONFIG)
+	./bin/client configs/$(CONFIG)
 
 clean:
 	@echo "Cleaning..."

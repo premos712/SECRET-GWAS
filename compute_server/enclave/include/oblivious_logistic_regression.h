@@ -32,6 +32,8 @@ class Oblivious_log_row : public Row {
     inline void update_Grad(double y_est, uint8_t x, int i);
     void init();
 
+    double modified_pade_approx_oblivious(double x);
+
    public:
     /* setup */
     Oblivious_log_row(int _size, const std::vector<int>& sizes, GWAS* _gwas, ImputePolicy _impute_policy, int thread_id);

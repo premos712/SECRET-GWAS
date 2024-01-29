@@ -223,5 +223,4 @@ void Covar::init_1_covar(int total_row_size) {
     for (int i = 0; i < total_row_size; i++) {
         data[covar_idx++][m] = 1;
     }
-
 }

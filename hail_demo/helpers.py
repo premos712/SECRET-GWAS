@@ -22,7 +22,6 @@ def peform_logistic_regresion():
     os.chdir('../compute_server/host')
     os.system("./gwashost configs/compute_server_config-demo.json")
 
-
 def export():
     os.chdir('../../hail_demo')
     shutil.move('../register_server/results.out', 'SECRET_results.vcf')

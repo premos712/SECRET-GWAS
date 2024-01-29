@@ -26,15 +26,6 @@ inline int get_padded_buffer_len(int n) {
     return (((n % DOUBLE_CACHE_BLOCK) != 0) + (n / DOUBLE_CACHE_BLOCK)) * DOUBLE_CACHE_BLOCK * 4;
 }
 
-// template <typename T>
-// inline bool is_NA(T a) {
-//     if (std::isnan(a)) return true;
-//     if (std::is_same<T, uint8_t>::value) return (a == NA_uint8);
-//     if (std::is_same<T, unsigned int>::value) return (a == NA_uint);
-//     if (std::is_same<T, double>::value) return (a == NA_double);
-//     return true;
-// }
-
 inline bool is_NA_uint8(uint8_t val) {
     return val == NA_uint8;
 }
@@ -73,6 +64,27 @@ class Row {
      ImputePolicy impute_policy;
 
      bool impute_average;
+
+    // If you change this - make sure to change the one in Matrix.h (don't ask me why I didn't use a single shared function, it just doesn't work for some reason)
+    double  __attribute__((noinline)) predicated_assignment(const int pred, const double &v1, const double &v2) {
+        __asm("mov %rsp,%rax");
+        __asm("mov $0x1,%edi");
+        __asm("sub %esi,%edi");
+        __asm("cvtsi2sd %edi,%xmm1");
+        __asm("sar $0x3f,%rax");
+        __asm("or %rax,%rdx");
+        __asm("mulsd (%rdx),%xmm1");
+        __asm("mov $0xffffffffffffffff,%rdx");
+        __asm("cvtsi2sd %esi,%xmm0");
+        __asm("or %rax,%rcx");
+        __asm("mulsd (%rcx),%xmm0");
+        __asm("addsd %xmm1,%xmm0");
+        __asm("shl $0x2f,%rax");
+        __asm("or %rax,%rsp");
+        __asm("pop %rbp");
+        __asm("ret");
+        return 0; // does nothing, supresses warning
+    }
 
     public:
      /* return metadata */
@@ -175,17 +187,6 @@ class GWAS {
     GWAS(EncAnalysis _regtype) : n(0), m(0), regtype(_regtype) {}
     GWAS(EncAnalysis _regtype, int _n, int _m) : n(_n), m(_m), regtype(_regtype), phenotype_and_covars(_n, _m) {}
 
-    // void add_y(Covar *_y) {
-    //     n = _y->size();
-    //     m = 1;
-    //     y = _y;
-    // }
-
-    // void add_covariant(Covar *cov) {
-    //     if (cov->size() != n) throw CombineERROR("Covariant size did not match n");
-    //     covariants.push_back(cov);
-    //     m++;
-    //}
     int dim() const { return m; }
     int size() const { return n; }
 #ifdef DEBUG
