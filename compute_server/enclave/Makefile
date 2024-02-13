@@ -1,5 +1,3 @@
-# Copyright (c) Open Enclave SDK contributors.
-# Licensed under the MIT License.
 include ../config.mk
 
 SRCDIR := src

@@ -1,5 +1,3 @@
-# Copyright (c) Open Enclave SDK contributors.
-# Licensed under the MIT License.
 SRCDIR := src
 SHAREDBUILDDIR := ../../shared/build
 BUILDDIR := build

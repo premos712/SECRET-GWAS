@@ -27,18 +27,7 @@ sudo apt-get install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-
 
 source /opt/openenclave/share/openenclave/openenclaverc
 
-cd register_server
-
-make clean; make
-make clean; make
-
-cd ../compute_server
-
-make clean; make
-
-cd ../client
-
-make clean; make
+make
 
 sudo apt install python3-pip -y
 pip3 install numpy
