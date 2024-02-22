@@ -37,7 +37,12 @@ void Client::init(const std::string& config_file) {
     y_and_cov_count = 0;
     filled_count = 0;
     sync_count = 0;
+    verified_count = 0;
     cov_work_start = false;
+
+    if (strcmp(ENCLAVE_PUBLIC_SIGNING_KEY, "Invalid") == 0) {
+        throw std::runtime_error("The public signing key is not specified. See compute_server/enclave/gen_pubkey_header.sh for an example of how to generate a proper header.");
+    }
 }
 
 void Client::run() {
@@ -197,6 +202,7 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
             phenotypes_list.resize(num_compute_servers);
             allele_queue_list.resize(num_compute_servers);
             encryption_queue_list.resize(num_compute_servers);
+            evidence_list.resize(num_compute_servers);
             // Mutexes are not movable apparently :/
             std::vector<std::mutex> tmp(num_compute_servers);
             encryption_queue_lock_list.swap(tmp);
@@ -213,15 +219,38 @@ void Client::handle_message(int connFD, const unsigned int global_id, const Clie
                 // Create AES keys for each thread of this compute server
                 aes_encryptor_list[aes_idx++] = std::vector<AESCrypto>(info.num_threads);
             }
-
             for (unsigned int id = 0; id < compute_server_info.size(); ++id) {
+                evidence_list[id].buffer = nullptr;
+                evidence_list[id].size = 0;
                 send_msg(id, REGISTER, client_hostname + "\t" + std::to_string(listen_port));
             }
 
             break;
         }
+        case EVIDENCE:
+        {
+            evidence_list[global_id].buffer = new uint8_t[msg.length()];
+            std::memcpy(evidence_list[global_id].buffer, reinterpret_cast<const uint8_t*>(msg.c_str()), msg.length());
+            evidence_list[global_id].size = msg.length();
+            break;
+        }
         case RSA_PUB_KEY:
         {
+            // Wait for the evidence if we didn't already recieve it
+            while(!evidence_list[global_id].size) {
+                std::this_thread::yield();
+            }
+
+            // Verify the evidence - we need to attest the enclave
+            uint8_t pubkey_raw[RSA_PUB_KEY_SIZE];
+            std::copy(msg.begin(), msg.end(), std::begin(pubkey_raw));
+            if (Attestation::verify_evidence(&evidence_list[global_id], pubkey_raw) != 0) {
+                throw std::runtime_error("Failed to verify remote enclave!");
+            }
+            if (static_cast<unsigned long>(++verified_count) == evidence_list.size()) {
+                std::cout << "All enclaves successfully attested and verified" << std::endl;
+            }
+
             // I wanted to use .resize() but the compiler cried about it, this is not ideal but acceptable.
             
             const std::string header = "-----BEGIN PUBLIC KEY-----";

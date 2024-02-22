@@ -7,6 +7,7 @@
 enum ClientMessageType {
   CLIENT_INFO,
   COMPUTE_INFO,
+  EVIDENCE,
   RSA_PUB_KEY,
   Y_AND_COV,
   DATA_REQUEST,

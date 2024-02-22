@@ -32,6 +32,14 @@ void setrsapubkey(uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]) {
     ComputeServer::finish_setup();
 }
 
+void setevidence(uint8_t evidence[MAX_EVIDENCE_SIZE], const int size) {
+    if (size > MAX_EVIDENCE_SIZE) {
+        throw std::runtime_error("Evidence is larger than the maximum evidence size!");
+    }
+    ComputeServer::set_evidence_and_size(evidence, size);
+}
+
+
 void setmaxbatchlines(int lines) {
     ComputeServer::set_max_batch_lines(lines);
 }
@@ -51,7 +59,6 @@ int getclientnum() {
 void getcovlist(char covlist[ENCLAVE_SMALL_BUFFER_SIZE]) {
     std::memset(covlist, 0, ENCLAVE_SMALL_BUFFER_SIZE);
     strcpy(covlist, ComputeServer::get_covariants().c_str());
-    // std::cout << ComputeServer::get_covariants() << std::endl;
 }
 
 bool getaes(const int client_num,

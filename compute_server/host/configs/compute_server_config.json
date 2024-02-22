@@ -1,5 +1,5 @@
 {
-    "compute_server_bind_port": 16702,
+    "compute_server_bind_port": 16701,
     "covariants": ["1", "1-5000", "2-5000"],
     "institutions": ["client1"],
     "y_val_name": "disease-5000",

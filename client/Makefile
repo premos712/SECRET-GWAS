@@ -1,3 +1,5 @@
+include config.mk
+
 # Based on https://hiltmon.com/blog/2013/07/03/a-simple-c-plus-plus-project-structure/
 CC := g++
 SRCDIR := src
@@ -14,11 +16,21 @@ SOURCES = $(shell find $(SRCDIR) -type f -name *.cpp)
 # Generate the names of the thread library's object files
 OBJECTS := $(patsubst $(SRCDIR)/%,$(BUILDDIR)/%,$(SOURCES:.$(SRCEXT)=.o))
 OBJECTS += $(shell find $(SHAREDBUILDDIR) -type f -name *.o)
-CFLAGS := -O3 -g -Wall -std=c++14 -pthread
+
+CFLAGS_TMP1=$(shell pkg-config oehost-$(CXX_COMPILER) --cflags)
+CFLAGS_TMP2=${subst -mllvm -x86-speculative-load-hardening,, $(CFLAGS_TMP1)}
+CFLAGS=${subst -fstack-protector-strong,, $(CFLAGS_TMP2)}
+# CXXFLAGS=$(shell pkg-config oehost-$(CXX_COMPILER) --cflags)
+# LDFLAGS=$(shell pkg-config oehost-$(CXX_COMPILER) --libs)
+
+CFLAGS+= -O3 -g -Wall -std=c++14 -pthread
 FSFLAGS := -ldl
 INC := -I ../shared/include -I ../shared/third_party -I include
+INC += ${LDFLAGS} ${INCDIR}
+# INC += $(LDFLAGS) $(CRYPTO_LDFLAGS) $(INCDIR)
 CRYPTFLAG := -lcryptopp
 CURLFLAG := -lcurl
+GLUEFLAGS := -L/opt/openenclave/share/pkgconfig/../../lib/openenclave/host -loehost -ldl -lpthread -lssl -lcrypto -lmbedcrypto -lmbedtls -lmbedx509# I have no idea why these flags fix the linking issue but they do. Someone who is better at Makefiles should fix this in the future :/
 
 # list of test drivers (with main()) for development
 TESTSOURCES := $(wildcard $(TESTDIR)/*test*.$(SRCEXT))
@@ -63,7 +75,7 @@ shared:
 # Compile the pager and tag this compilation
 client: ${OBJECTS}
 	@mkdir -p ${TARGETDIR}
-	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG} ${CURLFLAG}
+	${CC} ${CFLAGS} ${INC} -o ${TARGETDIR}/$@ $^ ${LIBTHREAD} ${FSFLAGS} ${CRYPTFLAG} ${CURLFLAG} ${GLUEFLAGS}
 
 run:
 	./bin/client configs/$(CONFIG)

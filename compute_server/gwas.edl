@@ -19,8 +19,10 @@ enclave {
         void start_timer([in] const char func_name[MAX_CLIENTNAME_LENGTH]);
 
         void stop_timer([in] const char func_name[MAX_CLIENTNAME_LENGTH]);
-
+        
         void setrsapubkey([in] uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
+        
+        void setevidence([in] uint8_t evidence[MAX_EVIDENCE_SIZE], const int size);
 
         void setmaxbatchlines(int lines);
 

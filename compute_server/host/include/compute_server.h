@@ -63,6 +63,9 @@ class ComputeServer {
     char* encrypted_aes_iv;
 
     uint8_t rsa_public_key[RSA_PUB_KEY_SIZE];
+    uint8_t evidence[MAX_EVIDENCE_SIZE];
+    unsigned int evidence_size;
+
     AESCrypto encoder;
 
     std::unordered_map<std::string, Institution*> institutions;
@@ -136,6 +139,8 @@ class ComputeServer {
     static void set_max_batch_lines(unsigned int lines);
 
     static uint8_t* get_rsa_pub_key();
+
+    static void set_evidence_and_size(uint8_t* evidence, unsigned int size);
     
     static int get_num_threads();
 

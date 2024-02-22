@@ -306,6 +306,12 @@ bool ComputeServer::handle_message(int connFD, const std::string& name, ComputeS
             if (!found) {
                 throw std::runtime_error("No institution with that name was found");
             }
+
+            // Send the evidence and the RSA key
+            response_mtype = EVIDENCE;
+            response = std::string(reinterpret_cast<char *>(evidence), evidence_size);
+            send_msg(name, response_mtype, response);
+
             response_mtype = RSA_PUB_KEY;
             response = std::string(reinterpret_cast<char *>(get_rsa_pub_key()), RSA_PUB_KEY_SIZE);
             break;
@@ -733,6 +739,11 @@ void ComputeServer::set_max_batch_lines(unsigned int lines) {
 
 uint8_t* ComputeServer::get_rsa_pub_key() {
     return get_instance()->rsa_public_key;
+}
+
+void ComputeServer::set_evidence_and_size(uint8_t* evidence, unsigned int size) {
+    std::memcpy(get_instance()->evidence, evidence, size);
+    get_instance()->evidence_size = size;
 }
 
 int ComputeServer::get_num_threads() {

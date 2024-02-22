@@ -50,6 +50,8 @@ all:
 	$(MAKE) build
 	$(MAKE) keys
 	$(MAKE) sign
+	$(MAKE) generate_header
+
 pre:
 	@ echo "Copying buffer sizes from shared directory"
 	cp ../../shared/include/buffer_size.h ./buffer_size.h
@@ -97,21 +99,8 @@ keys:
 	openssl genrsa -out $(KEYDIR)/private.pem -3 3072
 	openssl rsa -in $(KEYDIR)/private.pem -pubout -out $(KEYDIR)/public.pem
 
-# non-enclave tests
-# define make_tests
-#     $(1): CXX_NONENC_FLAGS += -g3 -DDEBUG
-#     $(1): $$(TESTDIR)/$(1).cpp $$(SOURCES)
-# 	$$(CXX) $$(CXX_NONENC_FLAGS) $$(SOURCES) $$(TESTDIR)/$(1).cpp -o $(1)
-# 	# valgrind -s --leak-check=yes ./$(1)
-# 	gdb $(1)
-# 	# ./$(1)
-# endef
-# $(foreach test, $(TESTS), $(eval $(call make_tests,$(test))))
-
-# tests: $(TESTS)
-
-# test_logistic_stat: $(SRCDIR)/logistic_regression.cpp $(SRCDIR)/enc_gwas.cpp $(TESTDIR)/test_logistic_stat.cpp
-# 	$(CXX) $(CXX_NONENC_FLAGS) -DDEBUG -o $@ $^
+generate_header:
+	./gen_pubkey_header.sh
 
 $(BUILDDIR)/%_nonoe.o: $(SRCDIR)/%.cpp
 	@echo "START"

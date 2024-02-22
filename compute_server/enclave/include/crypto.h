@@ -18,12 +18,33 @@
 #include <mbedtls/rsa.h>
 #include <mbedtls/sha256.h>
 
+// #include "mbedtls_utility.h"
+#include <openenclave/attestation/attester.h>
+#include <openenclave/attestation/sgx/evidence.h>
+#include <openenclave/attestation/sgx/report.h>
+#include <openenclave/enclave.h>
+#include <openenclave/attestation/verifier.h>
+#include <openenclave/attestation/custom_claims.h>
+
 #include "buffer_size.h"
+
+#include <iostream>
+
+inline void TRACE_ENCLAVE(const char* str) {
+    std::cout << str << std::endl;
+}
+
+static const oe_uuid_t sgx_remote_uuid = {OE_FORMAT_UUID_SGX_ECDSA};
 
 struct AESData {
     mbedtls_aes_context* aes_context;
     unsigned char aes_key[AES_KEY_LENGTH];
     unsigned char aes_iv[AES_IV_LENGTH];
+};
+
+struct buffer_t {
+    uint8_t* buffer;
+    size_t size;
 };
 
 void aes_decrypt_data(mbedtls_aes_context* aes_context, 
@@ -59,6 +80,11 @@ class RSACrypto {
          */
         int sha256(const uint8_t* data, size_t data_size, uint8_t sha256[32]);
 
+        int get_enclave_format_settings(const oe_uuid_t* format_id, buffer_t* format_settings);
+        
+        int get_evidence(buffer_t* evidence);
+
+        bool generate_attestation_evidence(uint8_t** evidence, size_t* evidence_size);
 
         uint8_t* get_pub_key();
 

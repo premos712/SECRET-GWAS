@@ -26,14 +26,20 @@
 #include "output.h"
 #include "aes-crypto.h"
 #include "json.hpp"
-#include "phenotype.h"
 #include "concurrentqueue.h"
+
+#include "attestation.h"
 
 #ifndef _CLIENT_H_
 #define _CLIENT_H_
 
 #define REGISTER_MESSAGE "REGISTER"
 #define BLOCK_SIZE 1
+
+struct Phenotype {
+    std::string message;
+    ComputeServerMessageType mtype;
+};
 
 struct EncryptionBlock {
   unsigned int line_num;
@@ -62,6 +68,8 @@ class Client {
     bool cov_work_start;
 
     std::chrono::time_point<std::chrono::high_resolution_clock> start;
+    std::vector<buffer_t> evidence_list;
+    std::atomic<int> verified_count;
     std::vector<std::vector<AESCrypto> > aes_encryptor_list;
     std::vector<std::vector<Phenotype> > phenotypes_list;
     std::vector<ConnectionInfo> compute_server_info;

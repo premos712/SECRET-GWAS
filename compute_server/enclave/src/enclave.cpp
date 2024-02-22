@@ -48,9 +48,13 @@ void setup_enclave_encryption(const int num_threads) {
         std::cerr << "ERROR: failed to initialized RSA key" << std::endl;
         exit(1); 
     }
+    buffer_t evidence = {0};
+    rsa.get_evidence(&evidence);
+
+    setevidence(evidence.buffer, evidence.size);
     setrsapubkey(rsa.get_pub_key());
 
-    std::cout << "RSA Pub Key Set" << std::endl;
+    std::cout << "RSA pubkey/evidence generated and set" << std::endl;
 
     getclientnum(&num_clients);
 
