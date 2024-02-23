@@ -23,13 +23,10 @@ This project is currently under active development and welcomes feedback, issues
 
 ## Installation
 
-SECRET-GWAS is developed for Linux and has been tested on Ubuntu 18.04 and 20.04. Use the appropriate installation script:
+SECRET-GWAS is developed for Linux and has been tested on Ubuntu 20.04. Use the installation script:
 
 ```
-# If using Ubuntu 18.04.
-> ./install-18.04.sh
-
-# If using Ubuntu 20.04.
+# For installation on Ubuntu 20.04.
 > ./install-20.04.sh
 ```
 
@@ -49,9 +46,9 @@ After running the installation script, all binaries should be compiled. If for a
 > source /opt/openenclave/share/openenclave/openenclaverc
 ```
 
-Additionally, when the Enclave Node (EN) binary is compiled it will generate a header for the Data Providing Institution (DPI) to use for attestation. If you are deploying across multiple machines make sure that you use the same signed binary for every EN instance and distribute the public key to each DPI.
+Additionally, when the Enclave Node (EN) binary is compiled it will generate a header for the Data Providing Institution (DPI) to use for attestation. If you are deploying across multiple machines make sure that you use the same signed binary for every EN instance and distribute the public key to each DPI. More details are in the section on multiple machine setups.
 
-### Running SECRET-GWAS Locally
+### Running SECRET-GWAS on a Single Machine
 We provide example configuration files to get you started. To run an example follow the below steps:
 
 0. The following example is easier if you use three seperate bash shells. However it can be done in one by running each command as a background process by adding a `&` to the end of each command
@@ -92,10 +89,18 @@ Running on port 18601
 
 Once both the EN and DPI communicate with the CS, the CS will tell all entities how to communicate with eachother, the EN and DPI will do attestation and share keys with eachother, then the GWAS will happen. The final result will be sent to the CS and then all entities will shut down.
 
-### Running SECRET-GWAS Remotely
+### Running SECRET-GWAS on Multiple Machines
 Running the system with remote servers follows identical steps, but the configurations must be tweaked. All ENs and DPIs must use a configuration file that specifies the IP address of the CS. This is the only IP address that must be hardcoded in a configuration file.
 
-There are many more options to change in the configuration file such as input files, number of ENs/DPIs, etc.
+You must change this JSON structure in both EN/DPI configuration files so that the CS can be reached:
+```
+"coordination_server_info": {
+    "hostname": "[INSERT CS IP ADDRESS HERE]",
+    "port": 16401
+}
+```
+
+The port number `16401` is just a default we provide, it can be changed if you also modify the port in the CS config file.
 
 
 ## Hail Demo
