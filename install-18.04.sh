@@ -31,7 +31,7 @@ sudo wget https://download.01.org/intel-sgx/sgx-dcap/1.7/linux/distro/ubuntu18.0
 sudo chmod +x sgx_linux_x64_driver.bin
 sudo ./sgx_linux_x64_driver.bin
 
-sudo apt -y install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf10 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-dpi open-enclave
+sudo apt -y install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf10 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-client open-enclave
 
 source /opt/openenclave/share/openenclave/openenclaverc
 
