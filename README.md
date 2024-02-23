@@ -69,7 +69,7 @@ Running on port 16401
 ```
 > cd enclave_node/host/ && make demo
 # or
-> cd enclave_node/ && ./gwashost configs/enclave_node_config-demo.json
+> cd enclave_node/host/ && ./gwashost configs/enclave_node_config-demo.json
 ```
 You should see the message
 ```
