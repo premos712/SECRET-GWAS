@@ -87,7 +87,7 @@ enclave running on 1 dpis
 ```
 You should see the message
 ```
-./bin/dpi configs/dpi_config-demo.json
+Running on port 18601
 ```
 
 Once both the EN and DPI communicate with the CS, the CS will tell all entities how to communicate with eachother, the EN and DPI will do attestation and share keys with eachother, then the GWAS will happen. The final result will be sent to the CS and then all entities will shut down.
