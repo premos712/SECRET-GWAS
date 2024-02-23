@@ -14,10 +14,10 @@ rand_size = 100003
 rands = np.random.random(rand_size)
 
 ALLELE_COUNT =  1000
-CLIENT_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
-print(CLIENT_COUNT)
+DPI_COUNT = 5000 if len(sys.argv) != 2 else int(sys.argv[1])
+print(DPI_COUNT)
 NUM_PROCS = multiprocessing.cpu_count()
-OUTPUT_FILE = f"../client/client_data/generated_alleles_{CLIENT_COUNT}-{ALLELE_COUNT}.tsv"
+OUTPUT_FILE = f"../dpi/dpi_data/generated_alleles_{DPI_COUNT}-{ALLELE_COUNT}.tsv"
 
 def run_bash_cmd(cmd):
     process = subprocess.Popen(cmd.split(), stdout=subprocess.PIPE)
@@ -80,10 +80,10 @@ proc_div = num_alleles / NUM_PROCS
 
 def helper(pid, locuses):
     random.seed('0x8BADF00D')
-    index = pid * int(proc_div) * scale_up_factor * CLIENT_COUNT
-    with open(f'tmp-{CLIENT_COUNT}-{str(pid).zfill(7)}.txt', 'w') as f:
+    index = pid * int(proc_div) * scale_up_factor * DPI_COUNT
+    with open(f'tmp-{DPI_COUNT}-{str(pid).zfill(7)}.txt', 'w') as f:
         top_line = ""
-        for i in range(CLIENT_COUNT):
+        for i in range(DPI_COUNT):
             top_line += f'HG{i} '
         if pid == 0:
             f.write(f'locus\talleles {top_line[:-1]}\n')
@@ -105,7 +105,7 @@ def helper(pid, locuses):
             for s_num in sorted_nums:
                 random_allele = weighted_random_by_dct(alleles)
                 genotype_data = ""
-                for i in range(CLIENT_COUNT):
+                for i in range(DPI_COUNT):
                     genotype_data += get_random_allele(rands[index % rand_size]) + '\t'
                     index += 1
                 f.write(f'{locus_split[0]}:{str(s_num)}\t{random_allele}\t{genotype_data[:-1]}\n')
@@ -120,7 +120,7 @@ for pid in range(NUM_PROCS):
 for p in ps:
     p.join()
 
-read_files = sorted(glob.glob(f'tmp-{CLIENT_COUNT}-*.txt'))
+read_files = sorted(glob.glob(f'tmp-{DPI_COUNT}-*.txt'))
 
 with open(OUTPUT_FILE, 'wb') as outfile:
     for f in read_files:
@@ -128,5 +128,5 @@ with open(OUTPUT_FILE, 'wb') as outfile:
             outfile.write(infile.read())
         os.remove(f)
 
-for path in glob.glob(f'tmp-{CLIENT_COUNT}-*.txt'):
+for path in glob.glob(f'tmp-{DPI_COUNT}-*.txt'):
     os.remove(path)

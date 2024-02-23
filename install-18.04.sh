@@ -1,8 +1,8 @@
 #!/bin/bash
 
 curl https://ipv4.icanhazip.com > ip.txt
-cp ip.txt compute_server/host/ip.txt
-cp ip.txt client/ip.txt
+cp ip.txt enclave_node/host/ip.txt
+cp ip.txt dpi/ip.txt
 rm ip.txt
 
 echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu bionic main' | sudo tee /etc/apt/sources.list.d/intel-sgx.list
@@ -31,7 +31,7 @@ sudo wget https://download.01.org/intel-sgx/sgx-dcap/1.7/linux/distro/ubuntu18.0
 sudo chmod +x sgx_linux_x64_driver.bin
 sudo ./sgx_linux_x64_driver.bin
 
-sudo apt -y install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf10 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-client open-enclave
+sudo apt -y install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf10 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-dpi open-enclave
 
 source /opt/openenclave/share/openenclave/openenclaverc
 

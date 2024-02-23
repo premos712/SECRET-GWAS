@@ -1,0 +1,9 @@
+{
+    "dpi_name": "dpi1",
+    "dpi_bind_port": 18601,
+    "allele_file": "dpi_data/generated_alleles_5000-1000.tsv",
+    "coordination_server_info": {
+        "hostname": "localhost",
+        "port": 16401
+    }
+}

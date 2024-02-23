@@ -4,18 +4,18 @@
 #include <string>
 #include <vector>
 
-enum ClientMessageType {
-  CLIENT_INFO,
-  COMPUTE_INFO,
+enum DPIMessageType {
+  DPI_INFO,
+  ENCLAVE_INFO,
   EVIDENCE,
   RSA_PUB_KEY,
   Y_AND_COV,
   DATA_REQUEST,
-  CLIENT_SYNC,
-  END_CLIENT
+  DPI_SYNC,
+  END_DPI
 };
 
-enum ComputeServerMessageType {
+enum EnclaveNodeMessageType {
   GLOBAL_ID, 
   REGISTER,
   AES_KEY,
@@ -24,12 +24,12 @@ enum ComputeServerMessageType {
   Y_VAL,
   DATA,
   EOF_DATA,
-  END_COMPUTE
+  END_ENCLAVE
 };
 
-enum RegisterServerMessageType {
-  COMPUTE_REGISTER,
-  CLIENT_REGISTER,
+enum CoordinationServerMessageType {
+  ENCLAVE_REGISTER,
+  DPI_REGISTER,
   OUTPUT,
   EOF_OUTPUT
 };
@@ -37,7 +37,7 @@ enum RegisterServerMessageType {
 struct ConnectionInfo {
   std::string hostname;
   unsigned int port;
-  unsigned int num_threads; // only for compute server
+  unsigned int num_threads; // only for enclave node
 };
 
 struct DataBlock {

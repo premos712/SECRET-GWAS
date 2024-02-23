@@ -42,7 +42,65 @@ Additionally, if you wish to run the demo you will need to install Hail.
 
 ## Usage
 
-To run the demo, first see the installation instructions to make sure you have all the prerequisites installed.
+### Preface
+After running the installation script, all binaries should be compiled. If for any reason you ever need to recompile make sure to add the following to your source:
+
+```
+> source /opt/openenclave/share/openenclave/openenclaverc
+```
+
+Additionally, when the Enclave Node (EN) binary is compiled it will generate a header for the Data Providing Institution (DPI) to use for attestation. If you are deploying across multiple machines make sure that you use the same signed binary for every EN instance and distribute the public key to each DPI.
+
+### Running SECRET-GWAS Locally
+We provide example configuration files to get you started. To run an example follow the below steps:
+
+0. The following example is easier if you use three seperate bash shells. However it can be done in one by running each command as a background process by adding a `&` to the end of each command
+1. Go to the coordination server directory and start it up
+```
+> cd coordination_server/ && make demo
+# or
+> cd coordination_server/ && ./bin/coordination_server configs/coordination_server_configs.json
+```
+You should see the message
+```
+Running on port 16401
+```
+2. Go to the EN directory and start it up
+```
+> cd enclave_node/host/ && make demo
+# or
+> cd enclave_node/ && ./gwashost configs/enclave_node_config-demo.json
+```
+You should see the message
+```
+**RUNNING REGRESSION**
+
+RSA pubkey/evidence generated and set
+enclave running on 1 dpis
+```
+
+3. Go to the DPI directory and start it up
+```
+> cd dpi/ && make demo
+# or
+> cd dpi/ && ./bin/dpi configs/dpi_config-demo.json
+```
+You should see the message
+```
+./bin/dpi configs/dpi_config-demo.json
+```
+
+Once both the EN and DPI communicate with the CS, the CS will tell all entities how to communicate with eachother, the EN and DPI will do attestation and share keys with eachother, then the GWAS will happen. The final result will be sent to the CS and then all entities will shut down.
+
+### Running SECRET-GWAS Remotely
+Running the system with remote servers follows identical steps, but the configurations must be tweaked. All ENs and DPIs must use a configuration file that specifies the IP address of the CS. This is the only IP address that must be hardcoded in a configuration file.
+
+There are many more options to change in the configuration file such as input files, number of ENs/DPIs, etc.
+
+
+## Hail Demo
+
+To run the Hail demo, first see the installation instructions to make sure you have all the prerequisites installed.
 
 Enter the demo directory
 
@@ -79,8 +137,8 @@ The output will be written to `SECRET_results.vcf`. This can be compared to the 
 
 ## Limitations
 The current version of SECRET-GWAS does not yet implement:
-- Attestation.
 - Imputation methods other than the one used by Hail (average value).
+- Collaborative GWAS pipeline stages aside from genetic association. Hail must be used locally for filtering, QC, PCA, etc.
 
 ## License
 This project is covered under the <a href="LICENSE">MIT</a> license.

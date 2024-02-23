@@ -41,12 +41,12 @@ class Parser {
 
     static int parse_hash(const std::string& line, const int encryptor_list_size);
 
-    // Returns the compute server we should send this allele to
+    // Returns the enclave node we should send this allele to
     static void parse_allele_line(std::string& line, 
                                   std::vector<uint8_t>& vals, 
                                   std::vector<uint8_t>& compressed_vals, 
                                   std::vector<std::vector<AESCrypto> >& encryptor_list, 
-                                  const int compute_server_hash);
+                                  const int enclave_node_hash);
 
     // split a given string based on the specified delimiter
     static void split(std::vector<std::string>& split_strings, const std::string& str, char delim=' ', int num_splits=-1);

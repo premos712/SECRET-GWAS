@@ -9,25 +9,25 @@ def send_data_to_SECRET(mt):
     mt.GT.n_alt_alleles().export('alleles-demo.tsv')
     mt.PurpleHair.export('PurpleHair.tsv')
     mt.isFemale.export('isFemale.tsv')
-    shutil.move('alleles-demo.tsv', '../client/client_data/alleles-demo.tsv')
-    shutil.move('PurpleHair.tsv', '../client/client_data/PurpleHair.tsv')
-    shutil.move('isFemale.tsv', '../client/client_data/isFemale.tsv')
+    shutil.move('alleles-demo.tsv', '../dpi/dpi_data/alleles-demo.tsv')
+    shutil.move('PurpleHair.tsv', '../dpi/dpi_data/PurpleHair.tsv')
+    shutil.move('isFemale.tsv', '../dpi/dpi_data/isFemale.tsv')
 
-    os.chdir('../register_server/')
+    os.chdir('../coordination_server/')
     os.system("make run &")
 
     sleep(.5)
 
-    os.chdir('../client/')
-    os.system("./bin/client configs/client_config-demo.json &")
+    os.chdir('../dpi/')
+    os.system("./bin/dpi configs/dpi_config-demo.json &")
 
 def peform_logistic_regresion():
-    os.chdir('../compute_server/host')
-    os.system("./gwashost configs/compute_server_config-demo.json")
+    os.chdir('../enclave_node/host')
+    os.system("./gwashost configs/enclave_node_config-demo.json")
 
 def export():
     os.chdir('../../hail_demo')
-    shutil.move('../register_server/results.out', 'SECRET_results.vcf')
+    shutil.move('../coordination_server/results.out', 'SECRET_results.vcf')
     print('Exported!')
     
 

@@ -1,0 +1,14 @@
+{
+    "enclave_node_bind_port": 16701,
+    "covariants": ["1", "isFemale"],
+    "institutions": ["dpi1"],
+    "y_val_name": "PurpleHair",
+    "analysis_type": "logistic-oblivious",
+    "enclave_path": "../enclave/gwasenc.signed",
+    "coordination_server_info": {
+        "hostname": "localhost",
+        "port": 16401
+    },
+    "impute_policy": "Hail"
+}
+// Add "flag": "simulate" or "flag": "debug" to the config to run the enclave in simulation/debugging mode!

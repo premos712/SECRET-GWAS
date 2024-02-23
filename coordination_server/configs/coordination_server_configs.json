@@ -1,0 +1,6 @@
+{
+    "coordination_server_bind_port": 16401,
+    "enclave_node_count": 1,
+    "dpi_count": 1,
+    "output_file_name": "results.out"
+}

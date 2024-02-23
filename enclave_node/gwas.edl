@@ -1,0 +1,79 @@
+enclave {
+    from "openenclave/edl/syscall.edl" import *;
+    from "platform.edl" import *;
+    include "buffer_size.h"
+
+    trusted {
+        public void mark_eof(const int thread_id);
+
+        public void setup_enclave_encryption(const int num_threads);
+
+        public void setup_num_patients();
+
+        public void setup_enclave_phenotypes(const int num_threads, enum EncAnalysis analysis_type, enum ImputePolicy impute_policy);
+
+        public void regression(const int thread_id, enum EncAnalysis analysis_type);
+    };
+
+    untrusted {
+        void start_timer([in] const char func_name[MAX_DPINAME_LENGTH]);
+
+        void stop_timer([in] const char func_name[MAX_DPINAME_LENGTH]);
+        
+        void setrsapubkey([in] uint8_t enc_rsa_pub_key[RSA_PUB_KEY_SIZE]);
+        
+        void setevidence([in] uint8_t evidence[MAX_EVIDENCE_SIZE], const int size);
+
+        void setmaxbatchlines(int lines);
+
+        /* get enclave setup data */
+        // return number of dpis
+        int getdpinum();
+
+        // get covariantnumber from host
+        // sepcially, when the covariant is indent 1, covariant name must be "1"
+        /* e.g. For model y =  1/(1 + e^(b0x + b1 + b2c1)), 
+        there are two covariants and their names are "Cov1" & "1" */
+        void getcovlist([out] char covlist[ENCLAVE_SMALL_BUFFER_SIZE]);
+        
+        // copy aes key and iv from host machine to enclave;
+        bool getaes(
+            const int dpi_num,
+            const int thread_id, 
+            [out] unsigned char key[256],
+            [out] unsigned char iv[256]);
+
+        // copy num patients from host machine to enclave;
+        int get_num_patients(
+            const int dpi_num,
+            [out] char num_patients_buffer[ENCLAVE_SMALL_BUFFER_SIZE]);
+
+        // copy y from host machine to enclave;
+        int gety(
+            const int dpi_num,
+            [out] char y[ENCLAVE_READ_BUFFER_SIZE]);
+
+
+        // copy no. covariant from host to enclave
+        // cov == "1" if the covariant is indent 1
+        int getcov(
+            const int dpi_num, 
+            [in] const char cov_name[MAX_DPINAME_LENGTH], 
+            [out] char cov[ENCLAVE_READ_BUFFER_SIZE]);
+
+        /* input data requests*/
+        // get batch from outside of enclave
+        // return const char* EOFSeperator if reaches end of dataset
+        // *rt = number of lines in batch
+        int getbatch(  
+            [out] char batch[ENCLAVE_READ_BUFFER_SIZE],
+            const int thread_id);
+
+        /* output data requests */
+        // copy encrypted batch to host machine
+        void writebatch(
+            [in] char buffer[ENCLAVE_READ_BUFFER_SIZE],
+            const int buffer_size,
+            const int thread_id);
+    };
+};

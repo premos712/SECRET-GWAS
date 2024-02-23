@@ -96,13 +96,13 @@ void Parser::parse_allele_line(std::string& line,
                               std::vector<uint8_t>& vals, 
                               std::vector<uint8_t>& compressed_vals, 
                               std::vector<std::vector<AESCrypto> >& encryptor_list, 
-                              const int compute_server_hash) {
+                              const int enclave_node_hash) {
     std::vector<std::string> line_split;
     Parser::split(line_split, line, '\t', 2);
     std::string locus_and_allele = line_split[0] + '\t' + line_split[1] + '\t';
 
     // Use the AES encryptor that corresponds to the appropriate thread on the server end
-    std::vector<AESCrypto>& aes_list = encryptor_list[compute_server_hash];
+    std::vector<AESCrypto>& aes_list = encryptor_list[enclave_node_hash];
     AESCrypto& encryptor = aes_list[hash_string(locus_and_allele, aes_list.size(), true)];
 
     std::string line_vals = line_split.back();

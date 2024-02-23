@@ -2,7 +2,7 @@ build/
 bin/
 env/
 data/
-client/client_data/*.tsv
+dpi/dpi_data/*.tsv
 *.o
 */.DS_Store
 .DS_Store

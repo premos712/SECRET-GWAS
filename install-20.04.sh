@@ -1,8 +1,8 @@
 #!/bin/bash
 
 curl https://ipv4.icanhazip.com > ip.txt
-cp ip.txt compute_server/host/ip.txt
-cp ip.txt client/ip.txt
+cp ip.txt enclave_node/host/ip.txt
+cp ip.txt dpi/ip.txt
 rm ip.txt
 
 echo 'deb [arch=amd64] https://download.01.org/intel-sgx/sgx_repo/ubuntu focal main' | sudo tee /etc/apt/sources.list.d/intel-sgx.list
@@ -23,7 +23,7 @@ sudo apt install libmbedtls-dev -y
 sudo apt-get install python -y
 sudo apt-get install libcurl4-openssl-dev -y
 sudo apt-get install libboost-all-dev -y
-sudo apt-get install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf17 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-client open-enclave -y
+sudo apt-get install clang-10 libssl-dev gdb libsgx-enclave-common libsgx-quote-ex libprotobuf17 libsgx-dcap-ql libsgx-dcap-ql-dev az-dcap-dpi open-enclave -y
 
 source /opt/openenclave/share/openenclave/openenclaverc
 

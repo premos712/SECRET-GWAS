@@ -4,7 +4,7 @@ import sys
 
 random.seed('0x8BADF00D')
 
-CLIENT_COUNT = 20000 if len(sys.argv) != 3 else int(sys.argv[1])
+DPI_COUNT = 20000 if len(sys.argv) != 3 else int(sys.argv[1])
 
 def weighted_random_by_dct(dct):
     rand_val = random.random()
@@ -46,14 +46,14 @@ rand_discrete_weighted_odds = {'1': .3, '2': .3, '3': .3, '4': .05, '5': .05}
 if len(sys.argv) == 3:
     if int(sys.argv[2]) == 0:
         random.seed('0x18BADF00D')
-        with open(f'../client/client_data/disease-{CLIENT_COUNT}.tsv', 'w') as f:
-            f.write(f's\tdisease-{CLIENT_COUNT}\n')
-            for i in range(CLIENT_COUNT):
+        with open(f'../dpi/dpi_data/disease-{DPI_COUNT}.tsv', 'w') as f:
+            f.write(f's\tdisease-{DPI_COUNT}\n')
+            for i in range(DPI_COUNT):
                 f.write(f'p\t{weighted_random_by_dct(isFemale_odds)}\n')
     for cov in range(int(sys.argv[2])):
-        with open(f'../client/client_data/{cov + 1}-{CLIENT_COUNT}.tsv', 'w') as f:
-            f.write(f's\t{cov+1}-{CLIENT_COUNT}\n')
-            for i in range(CLIENT_COUNT):
+        with open(f'../dpi/dpi_data/{cov + 1}-{DPI_COUNT}.tsv', 'w') as f:
+            f.write(f's\t{cov+1}-{DPI_COUNT}\n')
+            for i in range(DPI_COUNT):
                 f.write(f'p\t{weighted_random_by_dct(isFemale_odds)}\n')
     exit(0)
 
@@ -63,9 +63,9 @@ phenotypes = [['isFemale', isFemale_odds], ['age', age_odds], ['BMI', BMI_shape]
 for phenotype in phenotypes:
     name = phenotype[0]
     odds = phenotype[1]
-    with open(f'../client/client_data/{name}.tsv', 'w') as f:
+    with open(f'../dpi/dpi_data/{name}.tsv', 'w') as f:
         f.write(f's\t{name}\n')
-        for i in range(CLIENT_COUNT):
+        for i in range(DPI_COUNT):
             if type(odds) == dict:
                 f.write(f'p\t{weighted_random_by_dct(odds)}\n')
             else:
