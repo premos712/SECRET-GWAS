@@ -21,9 +21,11 @@ This allows for collaborative GWAS at a population-scale (millions of patients) 
 
 This project is currently under active development and welcomes feedback, issues, and suggestions.
 
-## Installation
+## Installation and Requirements
 
-SECRET-GWAS is developed for Linux and has been tested on Ubuntu 20.04. Use the installation script:
+SECRET-GWAS is developed for Linux and has been tested on Ubuntu 20.04. Additionally, it currently only works on Azure machines (DCsv2 and DCsv3 have been tested) due to our usage of Open Enclave's attestation implementation that communicates with the <a href="https://github.com/microsoft/Azure-DCAP-Client/tree/master">Azure DCAP client</a>. The code can be modified to work on non-Azure machines by removing the attestation check in the DPI codebase (a single line of code).
+
+Use the installation script:
 
 ```
 # For installation on Ubuntu 20.04.
@@ -143,6 +145,7 @@ The output will be written to `SECRET_results.vcf`. This can be compared to the 
 ## Limitations
 The current version of SECRET-GWAS does not yet implement:
 - Imputation methods other than the one used by Hail (average value).
+- Attestation for non-Azure SGX machines.
 - Collaborative GWAS pipeline stages aside from genetic association. Hail must be used locally for filtering, QC, PCA, etc.
 
 ## License
