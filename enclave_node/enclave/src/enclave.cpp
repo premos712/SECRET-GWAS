@@ -7,7 +7,6 @@
 
 #include "buffer.h"
 #include "crypto.h"
-#include "gwas.h"
 
 #ifdef NON_OE
 #include "enclave_glue.h"
@@ -37,6 +36,15 @@ int total_row_size;
 
 std::condition_variable start_thread_cv;
 volatile bool start_thread = false;
+
+// I don't get intrinsics, so I guess I'm writing more assembly!
+void  __attribute__((noinline)) set_mxcsr_flags() {
+    __asm("endbr64");
+    __asm("stmxcsr -0x4(%rsp)");
+    __asm("orl $0x8040,-0x4(%rsp)");
+    __asm("ldmxcsr -0x4(%rsp)");
+    return; // does nothing, supresses warning
+}
 
 void mark_eof(const int thread_id) {
     buffer_list[thread_id]->mark_eof();
@@ -141,7 +149,6 @@ void setup_num_patients() {
 void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, ImputePolicy impute_policy) {
     char* buffer_decrypt = new char[ENCLAVE_READ_BUFFER_SIZE];
     char* phenotype_buffer = new char[ENCLAVE_READ_BUFFER_SIZE];
-    // Covar* gwas_y = new Covar();
 
     // Read in covariants from each institution
     char covl[ENCLAVE_SMALL_BUFFER_SIZE];
@@ -151,13 +158,6 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     split_delim(covlist.c_str(), covariant_names);
 
     gwas = new GWAS(analysis_type, total_row_size, covariant_names.size() + 1);
-
-    // gwas_y->reserve(total_row_size);
-    // for (int _ = 0; _ < covariant_names.size(); ++_) {
-    //     Covar* cov_ptr = new Covar();
-    //     cov_ptr->reserve(total_row_size);
-    //     covar_ptr_list.push_back(cov_ptr);
-    // }
 
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
@@ -269,18 +269,13 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
     // Padding to avoid false sharing - for some reason false sharing can still happen unless we make
     // this larger than a single cache block. Maybe prefetching/compiler optimizations cause invalidations?
     int size_of_thread_buffer = get_padded_buffer_len(gwas->dim());
-    //std::cout << "size " << size_of_thread_buffer * sizeof(double) << std::endl;
     beta_delta_g = new double[num_threads * size_of_thread_buffer];
     Grad_g = new double[num_threads * size_of_thread_buffer];
     beta_g = new double[num_threads * size_of_thread_buffer];
     XTY_g = new double[num_threads * size_of_thread_buffer];
     XTY_og_g = new double[num_threads * size_of_thread_buffer];
-    //sse_ans_list = new double[num_threads];
     XTX_og_list = new double**[num_threads * size_of_thread_buffer];
 
-    // for (int i = 0; i < num_threads * size_of_thread_buffer; ++i) {
-    //     sse_ans_list[i] = 1;
-    // }
     try {
         for (int thread_id = 0; thread_id < num_threads; ++thread_id) {
             buffer_list[thread_id]->add_gwas(gwas, impute_policy, dpi_y_size);
@@ -295,6 +290,7 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
 }
 
 void regression(const int thread_id, EncAnalysis analysis_type) {
+    set_mxcsr_flags();
     std::string output_string;
     std::string loci_string;
     std::string alleles_string;
