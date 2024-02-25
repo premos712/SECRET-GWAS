@@ -7,6 +7,7 @@
 
 #include "buffer.h"
 #include "crypto.h"
+#include "mxcsr.h"
 
 #ifdef NON_OE
 #include "enclave_glue.h"
@@ -37,14 +38,6 @@ int total_row_size;
 std::condition_variable start_thread_cv;
 volatile bool start_thread = false;
 
-// I don't get intrinsics, so I guess I'm writing more assembly!
-void  __attribute__((noinline)) set_mxcsr_flags() {
-    __asm("endbr64");
-    __asm("stmxcsr -0x4(%rsp)");
-    __asm("orl $0x8040,-0x4(%rsp)");
-    __asm("ldmxcsr -0x4(%rsp)");
-    return; // does nothing, supresses warning
-}
 
 void mark_eof(const int thread_id) {
     buffer_list[thread_id]->mark_eof();
@@ -290,7 +283,14 @@ void setup_enclave_phenotypes(const int num_threads, EncAnalysis analysis_type, 
 }
 
 void regression(const int thread_id, EncAnalysis analysis_type) {
-    set_mxcsr_flags();
+    MXCSR mxcsr;
+    mxcsr.set_mxcsr_flags();
+    
+    if (!mxcsr.FTZ_and_DTZ_flags_set()) {
+        std::cout << "FTZ or DTZ flag was not correctly set - machine at risk for subnormal sidechannel attack." << std::endl;
+        return;
+    }
+
     std::string output_string;
     std::string loci_string;
     std::string alleles_string;
