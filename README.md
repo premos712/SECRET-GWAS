@@ -25,14 +25,14 @@ This project is currently under active development and welcomes feedback, issues
 
 SECRET-GWAS is developed for Linux and has been tested on Ubuntu 20.04. Additionally, it currently only works on Azure machines (DCsv2 and DCsv3 have been tested) due to our usage of Open Enclave's attestation implementation that communicates with the <a href="https://github.com/microsoft/Azure-DCAP-Client/tree/master">Azure DCAP client</a>. The code can be modified to work on non-Azure machines by removing the attestation check in the DPI codebase (a single line of code).
 
-Use the installation script:
+Use the installation script (this can take up to 20 minutes):
 
 ```
 # For installation on Ubuntu 20.04.
 > ./install-20.04.sh
 ```
 
-Additionally, if you wish to run the demo you will need to install Hail.
+Additionally, if you wish to run the demo you will need to install Hail (this usually takes around 10 minutes.)
 
 ```
 # For the demo, install Hail and Hail dependencies.
@@ -135,6 +135,12 @@ The output will be written to `Hail_result.vcf`. To run the Hail/*SECRET-GWAS* e
 ```
 
 The output will be written to `SECRET_results.vcf`. This can be compared to the original Hail demo output file, as can the two scripts. This is not a true integration into Hail, just a demonstration of how *SECRET-GWAS* parses Hail input files and creates similar output files.
+
+A simple script to compare the two output files can be run as follows
+
+```
+> python3 compare_outputs.py
+```
 
 ## Acknowledgements
 - Inspiration for several design decisions were taken from <a href="https://hail.is/" target = “_blank”>Hail</a>. We also use Hail for the filtering and QC in our GWAS pipeline.
