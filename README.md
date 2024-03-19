@@ -143,6 +143,13 @@ A simple script to compare the two output files can be run as follows
 > python3 compare_outputs.py
 ```
 
+It should output the following report
+
+```
+Average difference in Z stat 0.0001
+Maximum difference in Z stat 0.003245
+```
+
 ## Acknowledgements
 - Inspiration for several design decisions were taken from <a href="https://hail.is/" target = “_blank”>Hail</a>. We also use Hail for the filtering and QC in our GWAS pipeline.
 - The data we used for testing is upsampled from a <a href="https://www.internationalgenome.org/" target = “_blank”>1000 Genomes Project</a> snippet provided by <a href="https://hail.is/docs/0.2/tutorials/01-genome-wide-association-study.html" target = “_blank”>Hail</a>.
