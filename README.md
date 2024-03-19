@@ -121,13 +121,14 @@ Active the Python virtual environment
 > source env/bin/activate
 ```
 
-You can now use the demo. First run the original Hail demo
+You can now use the demo. First run the original Hail demo (runs in about 30 seconds)
 
 ```
 > python3 hail_gwas.py
 ```
 
-The output will be written to `Hail_result.vcf`. To run the Hail/*SECRET-GWAS* equivalent that performs the association using *SECRET-GWAS* use the second demo script
+The output will be written to `Hail_result.vcf`. To run the Hail/*SECRET-GWAS* equivalent that performs the association using *SECRET-GWAS* use the second demo script (also runs in about 30 seconds)
+
 
 
 ```
@@ -151,7 +152,7 @@ A simple script to compare the two output files can be run as follows
 ## Limitations
 The current version of SECRET-GWAS does not yet implement:
 - Imputation methods other than the one used by Hail (average value).
-- Attestation for non-Azure SGX machines.
+- Attestation only works on Azure SGX Machines.
 - Collaborative GWAS pipeline stages aside from genetic association. Hail must be used locally for filtering, QC, PCA, etc.
 
 ## License
