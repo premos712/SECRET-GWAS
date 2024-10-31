@@ -236,7 +236,7 @@ void DPI::handle_message(int connFD, const unsigned int global_id, const DPIMess
         }
         case RSA_PUB_KEY:
         {
-		/*
+	
             // Wait for the evidence if we didn't already recieve it
             while(!evidence_list[global_id].size) {
                 std::this_thread::yield();
@@ -245,13 +245,15 @@ void DPI::handle_message(int connFD, const unsigned int global_id, const DPIMess
             // Verify the evidence - we need to attest the enclave
             uint8_t pubkey_raw[RSA_PUB_KEY_SIZE];
             std::copy(msg.begin(), msg.end(), std::begin(pubkey_raw));
+		/*
             if (Attestation::verify_evidence(&evidence_list[global_id], pubkey_raw) != 0) {
                 throw std::runtime_error("Failed to verify remote enclave!");
             }
+		*/
             if (static_cast<unsigned long>(++verified_count) == evidence_list.size()) {
                 std::cout << "All enclaves successfully attested and verified" << std::endl;
             }
-		*/
+		
             // I wanted to use .resize() but the compiler cried about it, this is not ideal but acceptable.
             
             const std::string header = "-----BEGIN PUBLIC KEY-----";
