@@ -236,6 +236,7 @@ void DPI::handle_message(int connFD, const unsigned int global_id, const DPIMess
         }
         case RSA_PUB_KEY:
         {
+		/*
             // Wait for the evidence if we didn't already recieve it
             while(!evidence_list[global_id].size) {
                 std::this_thread::yield();
@@ -250,7 +251,7 @@ void DPI::handle_message(int connFD, const unsigned int global_id, const DPIMess
             if (static_cast<unsigned long>(++verified_count) == evidence_list.size()) {
                 std::cout << "All enclaves successfully attested and verified" << std::endl;
             }
-
+		*/
             // I wanted to use .resize() but the compiler cried about it, this is not ideal but acceptable.
             
             const std::string header = "-----BEGIN PUBLIC KEY-----";
@@ -272,7 +273,7 @@ void DPI::handle_message(int connFD, const unsigned int global_id, const DPIMess
             for (unsigned int thread_id = 0; thread_id < enclave_node_info[global_id].num_threads; ++thread_id) {
                 send_msg(global_id, AES_KEY, aes_encryptor_list[global_id][thread_id].get_key_and_iv(rsa_encryptor) + "\t" + std::to_string(thread_id));
             }
-
+		
             break;
         }
         case Y_AND_COV:
