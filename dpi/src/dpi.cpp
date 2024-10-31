@@ -245,7 +245,7 @@ void DPI::handle_message(int connFD, const unsigned int global_id, const DPIMess
             // Verify the evidence - we need to attest the enclave
             uint8_t pubkey_raw[RSA_PUB_KEY_SIZE];
             std::copy(msg.begin(), msg.end(), std::begin(pubkey_raw));
-		std::cout<<"before verify_evidence";
+		std::cout<<"before verify_evidence\n";
 		/*
             if (Attestation::verify_evidence(&evidence_list[global_id], pubkey_raw) != 0) {
                 throw std::runtime_error("Failed to verify remote enclave!");
