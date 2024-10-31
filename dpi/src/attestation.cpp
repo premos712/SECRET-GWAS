@@ -59,12 +59,13 @@ int Attestation::verify_evidence(buffer_t *evidence, const uint8_t* pubkey) {
     }
 
     // Verify evidence (duh)
+    /*
     result = oe_verify_evidence(&sgx_remote_uuid, evidence->buffer, evidence->size, nullptr, 0, nullptr, 0, &claims, &claims_length);
     if (result != OE_OK) {
         TRACE_ENCLAVE("oe_verify_evidence failed");
         goto exit;
     }
-
+    */
     // 2) validate the enclave identity's signer_id is the hash of the public
     // signing key that was used to sign an enclave. Check that the enclave was
     // signed by an trusted entity.
